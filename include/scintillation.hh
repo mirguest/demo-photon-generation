@@ -2,8 +2,9 @@
 #define scintillation_hh
 
 #include "OpEngine.hh"
+#include "ParametersManager.hh"
 
-template<typename OpEngine>
+template<typename OpEngine, template<typename T> typename ParametersManager>
 struct scintillation {
     typedef typename OpEngine::FloatType    engine_float_type;
     typedef typename OpEngine::Vector3Type  engine_vector3_type;
@@ -30,6 +31,16 @@ struct scintillation {
     engine_dot_func     dot_func;
     engine_add_func     add_func;
     engine_unit_func    unit_func;
+
+    // parameters
+    typedef ParametersManager<OpEngine> engine_pm_type;
+    typedef typename engine_pm_type::LookUpTable pm_lookup_t;
+    const engine_pm_type& pm;
+
+    scintillation(const engine_pm_type& _pm): pm(_pm) {
+
+    }
+
 
     void generate() {
 

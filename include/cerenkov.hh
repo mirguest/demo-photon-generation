@@ -51,9 +51,9 @@ struct cerenkov {
         op_float_t genstep_post_v = 1.0; // dummy
         op_vector3_t genstep_pre_pos;
         op_vector3_t genstep_delta;
-        op_float_t genstep_pre_t;
-        op_float_t genstep_pre_beta;
-        op_float_t genstep_post_beta;
+        op_float_t genstep_pre_t = 0.0;
+        op_float_t genstep_pre_beta = 0.0;
+        op_float_t genstep_post_beta = 0.0;
 
         size_t genstep_matidx = 0;
 
