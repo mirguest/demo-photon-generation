@@ -3,7 +3,9 @@
 
 int main(int argc, char* argv[]) {
 
-    DummyCerenkov_t cerenkov_generator;
+    DummyParametersManager_t parameters_manager;
+
+    DummyCerenkov_t cerenkov_generator(parameters_manager);
     DummyScintillation_t scintillation_generator;
 
     size_t n_cerenkov = 100;

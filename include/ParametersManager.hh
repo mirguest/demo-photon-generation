@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "OpEngine.hh"
+
 template<typename OpEngine>
 struct DummyParametersManager {
     typedef typename OpEngine::FloatType    engine_float_type;
@@ -79,7 +81,7 @@ struct DummyParametersManager {
     // for Refractive Index, the x is energy, y is index
     std::vector<LookUpTable> rindices;
 
-    const LookUpTable& rindex(size_t matidx) {
+    const LookUpTable& rindex(size_t matidx) const {
         if (matidx<rindices.size()) {
             return rindices[matidx];
         }
@@ -90,5 +92,7 @@ struct DummyParametersManager {
 
     }
 };
+
+typedef DummyParametersManager<DummyCpuOpEngine> DummyParametersManager_t;
 
 #endif

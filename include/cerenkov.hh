@@ -35,8 +35,13 @@ struct cerenkov {
     engine_rotateUz_func rotateUz_func;
 
     // parameters
-    typedef typename ParametersManager<OpEngine>::LookUpTable pm_lookup_t;
-    ParametersManager<OpEngine> pm;
+    typedef ParametersManager<OpEngine> engine_pm_type;
+    typedef typename engine_pm_type::LookUpTable pm_lookup_t;
+    const engine_pm_type& pm;
+
+    cerenkov(const engine_pm_type& _pm): pm(_pm) {
+
+    }
 
     void generate() {
         // GENSTEP INFO:
