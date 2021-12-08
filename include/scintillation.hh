@@ -18,7 +18,7 @@ struct scintillation {
     typedef typename OpEngine::AddFunc      engine_add_func; // functional: operator()
     typedef typename OpEngine::UnitFunc     engine_unit_func; // functional: operator()
 
-    typedef engine_float_type op_float_t;
+    typedef engine_float_type   op_float_t;
     typedef engine_vector3_type op_vector3_t;
 
     engine_unirand_func unirand;

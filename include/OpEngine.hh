@@ -66,6 +66,13 @@ struct DummyCpuOpEngine {
         }
     };
 
+    struct RotateUzFunc {
+        Vector3Type operator()(const Vector3Type& v1, const Vector3Type& newv) {
+            Vector3Type v;
+            return v;
+        }
+    };
+
     // const
     static const FloatType twopi;
     // units
