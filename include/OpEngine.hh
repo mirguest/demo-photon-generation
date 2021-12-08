@@ -2,6 +2,7 @@
 #define OpEngine_hh
 
 #include <array>
+#include <cmath>
 
 struct DummyCpuOpEngine {
     typedef double                   FloatType;
@@ -10,6 +11,12 @@ struct DummyCpuOpEngine {
     struct UniRandFunc {
         FloatType operator()() {
             return 1.0;
+        }
+    };
+
+    struct SqrtFunc {
+        FloatType operator()(FloatType v) {
+            return std::sqrt(v);
         }
     };
 };
