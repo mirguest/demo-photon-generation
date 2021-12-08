@@ -119,6 +119,6 @@ struct scintillation {
     
 };
 
-typedef scintillation<DummyCpuOpEngine> DummyScintillation_t;
+typedef scintillation<DummyCpuOpEngine, DummyParametersManager> DummyScintillation_t;
 
 #endif
