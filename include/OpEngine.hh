@@ -32,6 +32,12 @@ struct DummyCpuOpEngine {
         }
     };
 
+    struct LogFunc {
+        FloatType operator()(const FloatType& v) {
+            return std::log(v);
+        }
+    };
+
     struct AddFunc {
         Vector3Type operator()(const Vector3Type& v1, const Vector3Type& v2) {
             Vector3Type v;
@@ -60,7 +66,11 @@ struct DummyCpuOpEngine {
         }
     };
 
+    // const
     static const FloatType twopi;
+    // units
+    static const FloatType MeV;
+    static const FloatType eV;
 };
 
 

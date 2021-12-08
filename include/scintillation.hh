@@ -12,23 +12,35 @@ struct scintillation {
     typedef typename OpEngine::SqrtFunc     engine_sqrt_func; // functional: operator()
     typedef typename OpEngine::SinFunc      engine_sin_func; // functional: operator()
     typedef typename OpEngine::CosFunc      engine_cos_func; // functional: operator()
+    typedef typename OpEngine::LogFunc      engine_log_func; // functional: operator()
     typedef typename OpEngine::CrossFunc    engine_cross_func; // functional: operator()
     typedef typename OpEngine::DotFunc      engine_dot_func; // functional: operator()
     typedef typename OpEngine::AddFunc      engine_add_func; // functional: operator()
     typedef typename OpEngine::UnitFunc     engine_unit_func; // functional: operator()
 
+    typedef engine_float_type op_float_t;
+    typedef engine_vector3_type op_vector3_t;
+
+    engine_unirand_func unirand;
+    engine_sqrt_func    sqrt_func;
+    engine_sin_func     sin_func;
+    engine_cos_func     cos_func;
+    engine_log_func     log_func;
+    engine_cross_func   cross_func;
+    engine_dot_func     dot_func;
+    engine_add_func     add_func;
+    engine_unit_func    unit_func;
+
     void generate() {
-        typedef engine_float_type op_float_t;
-        typedef engine_vector3_type op_vector3_t;
-        
-        engine_unirand_func unirand;
-        engine_sqrt_func    sqrt_func;
-        engine_sin_func     sin_func;
-        engine_cos_func     cos_func;
-        engine_cross_func   cross_func;
-        engine_dot_func     dot_func;
-        engine_add_func     add_func;
-        engine_unit_func    unit_func;
+
+        // GENSTEP INFO:
+        op_float_t genstep_charge = 0.0;
+        op_float_t genstep_len = 0.0;
+        op_float_t genstep_pre_v = 1.0; // dummy
+        op_float_t genstep_post_v = 1.0; // dummy
+        op_vector3_t genstep_pre_pos;
+        op_vector3_t genstep_delta;
+        op_float_t genstep_pre_t;
 
         op_float_t cost = 1. - 2.*unirand();
         op_float_t sint = sqrt_func((1.-cost)*(1.+cost));
@@ -61,6 +73,37 @@ struct scintillation {
                                       dot_func(sinp, perp));
 
         photonPolarization = unit_func(photonPolarization);
+
+        // calculate energy
+        // TODO
+        op_float_t sampledEnergy = 4.*OpEngine::eV;
+
+        op_float_t atime{0.0};
+        op_vector3_t apos{0.,0.,0.};
+
+        // calculate delta time
+        op_float_t rand = 1.0;
+
+        if (genstep_charge != 0) {
+            rand = unirand();
+        }
+
+        op_float_t delta = rand * genstep_len;
+
+        op_float_t deltaTime = delta / 
+            ((genstep_pre_v+genstep_post_v)/2.);
+
+        op_float_t ScintillationTime = 0.0;
+
+        // TODO
+        // choose fast/slow/slower ...
+
+        deltaTime = deltaTime - ScintillationTime*log_func(unirand());
+
+        apos = add_func(genstep_pre_pos,
+                        dot_func(rand, genstep_delta));
+
+        atime = genstep_pre_t + deltaTime;
     }
     
 };
