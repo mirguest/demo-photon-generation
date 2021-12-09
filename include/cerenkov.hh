@@ -6,33 +6,12 @@
 
 template<typename OpEngine, template<typename T> typename ParametersManager>
 struct cerenkov {
+    typedef OpEngine engine_type;
     typedef typename OpEngine::FloatType    engine_float_type;
     typedef typename OpEngine::Vector3Type  engine_vector3_type;
 
-    typedef typename OpEngine::UniRandFunc  engine_unirand_func; // functional: operator()
-    typedef typename OpEngine::SqrtFunc     engine_sqrt_func; // functional: operator()
-    typedef typename OpEngine::SinFunc      engine_sin_func; // functional: operator()
-    typedef typename OpEngine::CosFunc      engine_cos_func; // functional: operator()
-    typedef typename OpEngine::LogFunc      engine_log_func; // functional: operator()
-    typedef typename OpEngine::CrossFunc    engine_cross_func; // functional: operator()
-    typedef typename OpEngine::DotFunc      engine_dot_func; // functional: operator()
-    typedef typename OpEngine::AddFunc      engine_add_func; // functional: operator()
-    typedef typename OpEngine::UnitFunc     engine_unit_func; // functional: operator()
-    typedef typename OpEngine::RotateUzFunc engine_rotateUz_func; // functional: operator()
-
     typedef engine_float_type op_float_t;
     typedef engine_vector3_type op_vector3_t;
-
-    engine_unirand_func unirand;
-    engine_sqrt_func    sqrt_func;
-    engine_sin_func     sin_func;
-    engine_cos_func     cos_func;
-    engine_log_func     log_func;
-    engine_cross_func   cross_func;
-    engine_dot_func     dot_func;
-    engine_add_func     add_func;
-    engine_unit_func    unit_func;
-    engine_rotateUz_func rotateUz_func;
 
     // parameters
     typedef ParametersManager<OpEngine> engine_pm_type;
@@ -44,6 +23,7 @@ struct cerenkov {
     }
 
     void generate() {
+
         // GENSTEP INFO:
         op_float_t genstep_charge = 0.0;
         op_float_t genstep_len = 0.0;
@@ -60,7 +40,7 @@ struct cerenkov {
         const pm_lookup_t& pm_rindex_lookup = pm.rindex(genstep_matidx);
 
         op_vector3_t x0 = genstep_pre_pos;
-        op_vector3_t p0 = unit_func(genstep_delta);
+        op_vector3_t p0 = engine_type::unit_func(genstep_delta);
 
         op_float_t t0 = genstep_pre_t;
         op_float_t beta = (genstep_pre_beta+genstep_post_beta)*0.5;
@@ -85,7 +65,7 @@ struct cerenkov {
         // sample an energy
 
         while (true) {
-            rand = unirand();  
+            rand = engine_type::unirand();  
             sampledEnergy = Pmin + rand * dp; 
             sampledRI = pm_rindex_lookup.value(sampledEnergy);
             // check if n(E) > 1/beta
@@ -95,7 +75,7 @@ struct cerenkov {
             cosTheta = BetaInverse / sampledRI;  
 
             sin2Theta = (1.0 - cosTheta)*(1.0 + cosTheta);
-            rand = unirand();  
+            rand = engine_type::unirand();  
 
             // Loop checking, 07-Aug-2015, Vladimir Ivanchenko
             if (rand*maxSin2 <= sin2Theta) {
@@ -103,19 +83,19 @@ struct cerenkov {
             }
         }
 
-        rand = unirand();
+        rand = engine_type::unirand();
 
-        op_float_t phi = OpEngine::twopi*rand;
-        op_float_t sinPhi = sin_func(phi);
-        op_float_t cosPhi = cos_func(phi);
+        op_float_t phi = engine_type::twopi*rand;
+        op_float_t sinPhi = engine_type::sin_func(phi);
+        op_float_t cosPhi = engine_type::cos_func(phi);
 
-        op_float_t sinTheta = sqrt_func(sin2Theta); 
+        op_float_t sinTheta = engine_type::sqrt_func(sin2Theta); 
         op_float_t px = sinTheta*cosPhi;
         op_float_t py = sinTheta*sinPhi;
         op_float_t pz = cosTheta;
 
         op_vector3_t photonMomentum{px,py,pz};
-        photonMomentum = rotateUz_func(photonMomentum, p0);
+        photonMomentum = engine_type::rotateUz_func(photonMomentum, p0);
 
         op_float_t sx = cosTheta*cosPhi;
         op_float_t sy = cosTheta*sinPhi; 
@@ -123,7 +103,7 @@ struct cerenkov {
 
         op_vector3_t photonPolarization{sx, sy, sz};
 
-        photonPolarization = rotateUz_func(photonPolarization, p0);
+        photonPolarization = engine_type::rotateUz_func(photonPolarization, p0);
 
         // 
         // todo:
@@ -131,7 +111,7 @@ struct cerenkov {
         // 
         // } while ( );
         //
-        rand = unirand();
+        rand = engine_type::unirand();
         op_float_t delta = rand * genstep_len;
         op_float_t deltaTime = delta / (genstep_pre_v + 
                                         rand*(genstep_post_v-
@@ -139,7 +119,7 @@ struct cerenkov {
 
         op_float_t aSecondaryTime = t0 + deltaTime;
 
-        op_vector3_t aSecondaryPosition = add_func(x0, dot_func(rand, genstep_delta));
+        op_vector3_t aSecondaryPosition = engine_type::add_func(x0, engine_type::dot_func(rand, genstep_delta));
 
     }
     
