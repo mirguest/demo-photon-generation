@@ -4,6 +4,12 @@
 #include "OpEngine.hh"
 #include "ParametersManager.hh"
 
+#if __CUDA_ARCH__
+#define OP_DEVICE_FUNC __device__
+#else
+#define OP_DEVICE_FUNC
+#endif
+
 template<typename OpEngine, template<typename T> typename ParametersManager>
 struct scintillation {
     typedef OpEngine engine_type;
@@ -22,8 +28,8 @@ struct scintillation {
 
     }
 
-
-    void generate() {
+    OP_DEVICE_FUNC
+    static void generate() {
 
         // GENSTEP INFO:
         op_float_t genstep_charge = 0.0;
@@ -34,10 +40,14 @@ struct scintillation {
         op_vector3_t genstep_delta;
         op_float_t genstep_pre_t;
 
+        op_float_t twopi = engine_type::acos_func(-1)*2;
+        op_float_t MeV = 1.0;
+        op_float_t eV = 1.e-6;
+
         op_float_t cost = 1. - 2.*engine_type::unirand();
         op_float_t sint = engine_type::sqrt_func((1.-cost)*(1.+cost));
 
-        op_float_t phi = engine_type::twopi*engine_type::unirand();
+        op_float_t phi = twopi*engine_type::unirand();
         op_float_t sinp = engine_type::sin_func(phi);
         op_float_t cosp = engine_type::cos_func(phi);
 
@@ -56,7 +66,7 @@ struct scintillation {
         op_vector3_t perp = engine_type::cross_func(photonMomentum, photonPolarization);
 
 
-        phi = engine_type::twopi*engine_type::unirand();
+        phi = twopi*engine_type::unirand();
         sinp = engine_type::sin_func(phi);
         cosp = engine_type::cos_func(phi);
 
@@ -68,7 +78,7 @@ struct scintillation {
 
         // calculate energy
         // TODO
-        op_float_t sampledEnergy = 4.*engine_type::eV;
+        op_float_t sampledEnergy = 4.*eV;
 
         op_float_t atime{0.0};
         op_vector3_t apos{0.,0.,0.};

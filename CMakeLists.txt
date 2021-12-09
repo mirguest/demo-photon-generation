@@ -18,7 +18,7 @@ message(STATUS "CMAKE_C_FLAGS_RELEASE: ${CMAKE_C_FLAGS_RELEASE}")
 message(STATUS "CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 ##############################################################################
-project (demo-photon-generation)
+project (demo-photon-generation LANGUAGES CXX CUDA)
 ##############################################################################
 
 # C++ Standard: 17
@@ -35,6 +35,8 @@ include(GNUInstallDirs)
 add_library(PhotonGeneration SHARED
   src/scintillation.cc
   src/cerenkov.cc
+  src/OpEngine.cc
+  src/GPUOpEngine.cu
 )
 
 target_include_directories(PhotonGeneration
@@ -59,3 +61,11 @@ target_link_libraries(demo-photon-generation
 install(TARGETS demo-photon-generation)
 
 
+add_executable(demo-photon-generation-gpu
+  tests/demo-photon-generation-gpu.cu
+)
+target_link_libraries(demo-photon-generation-gpu
+  PhotonGeneration
+)
+
+install(TARGETS demo-photon-generation-gpu)
